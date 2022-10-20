@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import SideBar from "@/components/SideBar";
-import { mapActions, mapGetters } from "vuex";
+import SideBar from '@/components/SideBar'
+import { mapActions, mapGetters } from 'vuex'
 export default {
-  name: "default",
+  name: 'Default',
   comments: { SideBar },
-  data:() => ({
+  data: () => ({
     active: 'home',
     expand: false,
   }),

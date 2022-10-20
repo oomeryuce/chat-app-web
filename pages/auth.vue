@@ -3,14 +3,12 @@
 </template>
 
 <script>
-import AuthLayout from "@/components/Auth/AuthLayout";
+import AuthLayout from '@/components/Auth/AuthLayout'
 export default {
-  name: "auth",
-  layout: "auth",
+  name: 'Auth',
   components: { AuthLayout },
+  layout: 'auth',
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

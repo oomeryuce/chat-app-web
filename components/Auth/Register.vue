@@ -2,7 +2,9 @@
   <div class="container m-auto">
     <div class="grid grid-cols-6 lg:grid-cols-5 gap-4 min-h-screen">
       <div class="p-10 lg:p-20 my-auto col-span-6 md:col-span-3 lg:col-span-2">
-        <div class="flex items-center justify-start text-4xl font-semibold text-purple-500">
+        <div
+          class="flex items-center justify-start text-4xl font-semibold text-purple-500"
+        >
           <i class="bx bx-message-square-dots"></i>
           <span>Chat App</span>
         </div>
@@ -82,7 +84,8 @@
             animation-type="vertical"
             type="submit"
             :loading="registerLoading"
-            shadow border
+            shadow
+            border
             @keyup.enter="registerUser"
           >
             <b>Register</b>
@@ -92,8 +95,12 @@
           </vs-button>
         </form>
         <div class="flex justify-center text-sm my-5">
-          <span class="text-gray-600 dark:text-gray-400">Already have an Account</span>
-          <n-link :to="'/auth'" class="ml-3 text-purple-500 font-bold">Login</n-link>
+          <span class="text-gray-600 dark:text-gray-400"
+            >Already have an Account</span
+          >
+          <n-link :to="'/auth'" class="ml-3 text-purple-500 font-bold"
+            >Login</n-link
+          >
         </div>
       </div>
       <div class="col-span-3 hidden md:flex">
@@ -206,13 +213,13 @@ export default {
           })
           setTimeout(() => {
             self.$auth.setUserToken(token)
-          }, "3000")
+          }, '3000')
         })
         .catch(function (err) {
           let errors = ''
           if (err.errorMessage && err.errorMessage.length > 0) {
             err.errorMessage.forEach((error, index) => {
-              if (index !== 0 && index !== err.errorMessage.length){
+              if (index !== 0 && index !== err.errorMessage.length) {
                 errors += '<br>'
               }
               errors += error

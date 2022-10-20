@@ -3,9 +3,11 @@
 </template>
 
 <script>
-import DefaultPage from '~/components/Dashboard/DefaultPage'
+import DefaultPage from '~/components/Settings/DefaultPage'
 export default {
-  name: 'IndexPage',
+  name: 'Settings',
   components: { DefaultPage },
 }
 </script>
+
+<style scoped></style>

@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "default",
+  name: 'Default',
   async mounted() {
     await this.$vs.setColor('primary', '#7850ff')
     await this.$store.dispatch(`getSettings`)

@@ -125,7 +125,7 @@ export const mutations = {
       state.selected = payload[index]
     }
     */
-    state.selected = null;
+    state.selected = null
   },
   setMessagesLoading(state, payload) {
     state.messagesLoading = payload
@@ -163,7 +163,7 @@ export const actions = {
       commit('setPage', state.page + 1)
       try {
         const response = await this.$axios.get(
-          '/api/conversation/' + id + '?page=' + state.page
+          '/api/messages/' + id + '?page=' + state.page
         )
         commit('setMessages', response.data.data.data)
         commit('setMessagesLoading', false)

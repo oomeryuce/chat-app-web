@@ -138,7 +138,8 @@ export const actions = {
   },
   async setMessageBadge({ state, commit }, payload) {
     await commit(
-      'setMessageBadge', 10
+      'setMessageBadge',
+      10
       //payload === 0 ? 0 : state.messagesBadge + payload
     )
   },

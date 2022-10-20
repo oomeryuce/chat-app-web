@@ -1,15 +1,6 @@
 <template>
   <div
-    class="
-      flex flex-row
-      lg:flex-col
-      bg-white
-      h-24
-      w-full
-      lg:h-screen lg:border-l lg:border-r
-      border-gray-200 border-b
-      lg:border-b-0
-    "
+    class="flex flex-row lg:flex-col bg-white h-24 w-full lg:h-screen lg:border-l lg:border-r border-gray-200 border-b lg:border-b-0"
   >
     <div class="mx-5 mt-5 mb-2 flex flex-row items-center hidden lg:flex">
       <h1 class="mb-1 mr-1">Messages</h1>
@@ -32,15 +23,7 @@
     </div>
 
     <div
-      class="
-        hidden
-        lg:flex
-        justify-between
-        items-center
-        lg:mx-5 lg:mt-5
-        px-3
-        lg:px-0
-      "
+      class="hidden lg:flex justify-between items-center lg:mx-5 lg:mt-5 px-3 lg:px-0"
     >
       <h3 class="flex">Contacts</h3>
       <vs-button size="small" success flat disabled>
@@ -51,46 +34,44 @@
 
     <div
       ref="contacts"
-      class="
-        relative
-        flex flex-row
-        lg:flex-col lg:divide-y lg:divide-gray-200
-        pl-3
-        lg:pl-0
-        mt-4
-        overflow-auto
-        disable-scrollbars
-      "
+      class="relative flex flex-row lg:flex-col lg:divide-y lg:divide-gray-200 pl-3 lg:pl-0 mt-4 overflow-auto disable-scrollbars"
       :class="{ 'w-screen lg:h-screen': loading }"
     >
       <div
         v-for="contact in filteredList"
         :key="contact.id"
-        class="
-          flex
-          lg:justify-between
-          cursor-pointer
-          p-2
-          rounded-lg
-          hover:bg-purple-50
-          lg:rounded-none lg:pl-5 lg:pr-3 lg:py-4
-        "
+        class="flex lg:justify-between cursor-pointer p-2 rounded-lg hover:bg-purple-50 lg:rounded-none lg:pl-5 lg:pr-3 lg:py-4"
         :class="{ 'bg-gray-100': contact === selected }"
-        @click="selected = contact"
+        @click="setRoom(contact)"
       >
         <div class="flex flex-row">
-          <vs-avatar v-if="!contact.is_group && messagedUser(contact.participants).avatar !== 'noavatar'" primary size="42">
+          <vs-avatar
+            v-if="
+              !contact.is_group &&
+              messagedUser(contact.participants).avatar !== 'noavatar'
+            "
+            primary
+            size="42"
+          >
             <img
-              :src="`${smallAvatar + messagedUser(contact.participants).avatar}.jpg`"
+              :src="`${
+                smallAvatar + messagedUser(contact.participants).avatar
+              }.jpg`"
               alt="Avatar"
             />
             <template v-if="contact.unread > 0" #badge>
               <span>{{ contact.unread }}</span>
             </template>
           </vs-avatar>
-          <vs-avatar primary v-else>
-            <i v-if="!contact.is_group && messagedUser(contact.participants).avatar === 'noavatar'" class='bx bx-user'></i>
-            <i v-else class='bx bx-network-chart'></i>
+          <vs-avatar v-else primary>
+            <i
+              v-if="
+                !contact.is_group &&
+                messagedUser(contact.participants).avatar === 'noavatar'
+              "
+              class="bx bx-user"
+            ></i>
+            <i v-else class="bx bx-network-chart"></i>
           </vs-avatar>
           <div
             v-show="contact === selected || !isMobile"
@@ -98,31 +79,34 @@
             :class="!contact.is_group ? '' : 'justify-center'"
           >
             <h4 class="truncate lg:w-36">
-              {{ !contact.is_group && messagedUser(contact.participants) ? messagedUser(contact.participants).name : contact.name }}
+              {{
+                !contact.is_group && messagedUser(contact.participants)
+                  ? messagedUser(contact.participants).name
+                  : contact.name
+              }}
             </h4>
             <span v-if="!contact.is_group" class="text-gray-400 text-xs">
-              {{ !contact.is_group ? '@' + messagedUser(contact.participants).username : '' }}
+              {{
+                !contact.is_group
+                  ? '@' + messagedUser(contact.participants).username
+                  : ''
+              }}
             </span>
           </div>
         </div>
-        <span
-          class="
-            hidden
-            lg:flex
-            text-xs text-right text-gray-500
-          "
-        >{{ $moment(contact.created_at).fromNow(true) }}</span
-        >
+        <span class="hidden lg:flex text-xs text-right text-gray-500">{{
+          $moment(contact.created_at).fromNow(true)
+        }}</span>
       </div>
 
       <client-only>
         <InfiniteScrollingHorizontal
-          direction="bottom"
           v-if="filteredList && !enough"
+          direction="bottom"
           spinner="spiral"
           :distance="300"
           @infinite="infiniteHandler"
-        ><span slot="no-results"></span><span slot="no-more"></span
+          ><span slot="no-results"></span><span slot="no-more"></span
         ></InfiniteScrollingHorizontal>
       </client-only>
     </div>
@@ -130,11 +114,11 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapState} from "vuex";
+import { mapActions, mapGetters, mapState } from 'vuex'
 import InfiniteScrollingHorizontal from '../../helpers/horizontalScroll'
 
 export default {
-  name: "RoomList",
+  name: 'RoomList',
   components: {
     InfiniteScrollingHorizontal,
   },
@@ -157,7 +141,7 @@ export default {
         return this.selectedState
       },
       set(value) {
-        this.setSelected(value)
+        // this.setSelected(value)
       },
     },
     page: {
@@ -171,9 +155,13 @@ export default {
     filteredList() {
       return this.contacts.filter((contact) => {
         if (!contact.is_group) {
-          return this.messagedUser(contact.participants).username.toLowerCase().includes(this.search.toLowerCase())
+          return this.messagedUser(contact.participants)
+            .username.toLowerCase()
+            .includes(this.search.toLowerCase())
         }
-        return contact.name ? contact.name.toLowerCase().includes(this.search.toLowerCase()) : null
+        return contact.name
+          ? contact.name.toLowerCase().includes(this.search.toLowerCase())
+          : null
       })
     },
   },
@@ -182,6 +170,18 @@ export default {
       search: '',
       smallAvatar: process.env.AVATAR_SMALL,
     }
+  },
+  watch: {
+    selected(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.setMessages([])
+      }
+      /* if (newVal.user.id !== parseInt(this.$route.query.room)) {
+        this.$router.replace(
+          `${this.$route.path}?room=${this.selected.user.id}`
+        )
+      } */
+    },
   },
   mounted() {
     const queryUser = parseInt(this.$route.query.room)
@@ -208,18 +208,6 @@ export default {
       }
     } */
   },
-  watch: {
-    selected(newVal, oldVal) {
-      if (newVal !== oldVal) {
-        this.setMessages([])
-      }
-      /* if (newVal.user.id !== parseInt(this.$route.query.room)) {
-        this.$router.replace(
-          `${this.$route.path}?room=${this.selected.user.id}`
-        )
-      } */
-    },
-  },
   methods: {
     ...mapActions({
       getContacts: 'messages/getContacts',
@@ -232,12 +220,12 @@ export default {
     }),
     messagedUser(arr) {
       let toUser = null
-      arr.forEach(user => {
+      arr.forEach((user) => {
         if (user.id !== this.loggedInUser.id) {
-          toUser = user.user;
+          toUser = user.user
         }
       })
-      return toUser;
+      return toUser
     },
     checkSender(message) {
       if (message.to === this.loggedInUser.id) {
@@ -245,11 +233,14 @@ export default {
       }
       return message.to
     },
+    async setRoom(data) {
+      this.selected = data
+      await this.$emit('setMessage', data)
+    },
     infiniteHandler($state) {
       const self = this
       if (!this.enough) {
         this.getContacts(this.page).then(function (res) {
-          console.log('test')
           if (!self.selected && !self.query) {
             self.selected = self.contacts[0]
           }
@@ -295,6 +286,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
