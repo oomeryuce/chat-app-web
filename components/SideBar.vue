@@ -28,7 +28,7 @@
         <vs-button href="/settings" color="tumblr" relief icon>
           <i class="bx bx-cog"></i>
         </vs-button>
-        <vs-button danger relief icon @click="$auth.logout()">
+        <vs-button danger relief icon @click="logOut">
           <i class="bx bx-power-off"></i>
         </vs-button>
       </vs-button-group>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
 import RoomList from '~/components/Dashboard/RoomList'
 import SettingsList from '~/components/Settings/SideList'
 export default {
@@ -55,6 +55,10 @@ export default {
     ...mapGetters(['loggedInUser']),
   },
   methods: {
+    ...mapActions({
+      resetMessages: 'messages/resetState',
+      resetState: 'resetState',
+    }),
     settingTab(data) {
       this.$emit('changeSettingsTab', data)
     },
@@ -63,6 +67,11 @@ export default {
     },
     capitalize(text) {
       return text.toUpperCase()
+    },
+    async logOut() {
+      await this.resetMessages()
+      await this.resetState()
+      await this.$auth.logout()
     },
   },
 }

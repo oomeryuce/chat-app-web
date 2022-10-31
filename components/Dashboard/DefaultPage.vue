@@ -25,7 +25,6 @@ export default {
   methods: {
     changeSelected(select) {
       this.selected = select
-      console.log(select)
     },
   },
 }

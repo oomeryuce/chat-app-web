@@ -3,11 +3,11 @@ const getDefaultState = () => {
     loading: false,
     sendLoading: false,
     messagesLoading: false,
-    contacts: [],
+    rooms: [],
     messages: [],
     page: 0,
-    contactsPage: 1,
-    contactsEnough: false,
+    roomsPage: 1,
+    roomsEnough: false,
     enough: false,
     selected: null,
     query: null,
@@ -26,11 +26,11 @@ export const mutations = {
   setPage(state, payload) {
     state.page = payload
   },
-  setContactsPage(state, payload) {
-    state.contactsPage = payload
+  setRoomsPage(state, payload) {
+    state.roomsPage = payload
   },
-  setContactsEnough(state, payload) {
-    state.contactsEnough = payload
+  setRoomsEnough(state, payload) {
+    state.roomsEnough = payload
   },
   setEnough(state, payload) {
     state.enough = payload
@@ -38,8 +38,8 @@ export const mutations = {
   setSocket(state, payload) {
     state.socket = payload
   },
-  setContacts(state, payload) {
-    state.contacts = [...state.contacts, ...payload]
+  setRooms(state, payload) {
+    state.rooms = [...state.rooms, ...payload]
   },
   removeMessage(state, id) {
     const index = state.messages.findIndex(
@@ -81,11 +81,11 @@ export const mutations = {
     state.messages = payload
   },
   messageFromAnother(state, payload) {
-    var index = state.contacts.findIndex(
-      (contact) => contact.user.id === payload.user.id
+    var index = state.rooms.findIndex(
+      (room) => room.user.id === payload.user.id
     )
     if (index > -1) {
-      state.contacts[index].unread += 1
+      state.rooms[index].unread += 1
     } else {
       const selected = {
         id: +new Date(),
@@ -96,29 +96,24 @@ export const mutations = {
         updated_at: payload.updated_at,
         user: payload.user,
       }
-      state.contacts.unshift(selected)
+      state.rooms.unshift(selected)
     }
   },
   setSelected(state, payload) {
     state.page = 0
-    if (state.selected && payload.user.id !== state.selected.user.id) {
-      state.enough = false
-    }
     state.query = null
     state.selected = payload
     state.selected.unread = 0
-    var index = state.contacts.findIndex(
-      (contact) => contact.user.id === payload.user.id
-    )
-    if (index === -1) {
-      state.contacts.unshift(payload)
+    let index = state.rooms.findIndex((room) => room.id === payload.id)
+    if (index > 0) {
+      state.rooms.splice(index, 1)
+      state.rooms.unshift(payload)
     }
   },
   setQuery(state, payload) {
     state.query = payload
   },
   selectQueryUser(state, payload) {
-    console.log(payload)
     /* let query = parseInt(state.query)
     var index = payload.findIndex((contact) => contact.user.id === query)
     if (index > -1) {
@@ -133,12 +128,26 @@ export const mutations = {
   resetState(state) {
     Object.assign(state, getDefaultState())
   },
+  resetMessages(state) {
+    state.messages = []
+    state.enough = false
+    state.page = 0
+  },
+  resetRooms(state) {
+    state.rooms = []
+  },
 }
 export const actions = {
   async resetState({ commit }) {
     commit('resetState')
   },
-  async getContacts({ dispatch, commit }, page) {
+  async resetMessageBoard({ commit }) {
+    commit('resetMessages')
+  },
+  async resetRoomList({ commit }) {
+    commit('resetRooms')
+  },
+  async getRooms({ dispatch, commit }, page) {
     try {
       const response = await this.$axios.get('/api/messages?page=' + page)
       commit('setLoading', false)
@@ -148,14 +157,14 @@ export const actions = {
       if (page === 1) {
         commit('selectQueryUser', response.data.data.data)
       }
-      commit('setContacts', response.data.data.data)
+      commit('setRooms', response.data.data.data)
       return response.data
     } catch (error) {
       dispatch('alert/error', error.response, {
         root: true,
       })
       commit('setLoading', false)
-      throw 'Unable to load contacts'
+      throw 'Unable to load rooms'
     }
   },
   async getMessages({ state, dispatch, commit }, id) {
@@ -182,28 +191,26 @@ export const actions = {
   async sendMessage({ dispatch, commit, rootState }, payload) {
     const unique = +new Date()
     const msg = {
-      from: rootState.auth.user.id,
-      unique: unique,
       id: unique,
-      image: payload.get('image'),
-      read: true,
-      room_id: unique,
-      text: payload.get('text'),
-      to: parseInt(payload.get('contact_id')),
-      user: rootState.auth.user,
+      unique: unique,
+      user_id: rootState.auth.user.id,
+      room_id: payload.roomId,
+      text: payload.text,
+      image: null,
+      read: false,
       updated_at: new Date(),
       created_at: new Date(),
     }
     commit('setSendingMessages', msg)
     try {
-      const response = await this.$axios.post('/api/conversation/send', payload)
+      const response = await this.$axios.post('/api/messages/send', payload)
       commit('insertMessage', { id: unique, message: response.data.data })
       return response.data
     } catch (error) {
       dispatch('alert/error', error.response, {
         root: true,
       })
-      throw unique
+      throw { error, unique }
     }
   },
   async getUser({ dispatch }, id) {
@@ -219,6 +226,18 @@ export const actions = {
       throw 'Unable to get user'
     }
   },
+  async createARoom({ dispatch }, payload) {
+    try {
+      const response = await this.$axios.post('/api/messages/create', payload)
+      dispatch('getRooms', 0)
+      return response.data.data
+    } catch (error) {
+      dispatch('alert/error', error.response, {
+        root: true,
+      })
+      throw error.response
+    }
+  },
   async setSelected({ commit }, payload) {
     commit('setSelected', payload)
   },
@@ -228,11 +247,11 @@ export const actions = {
   async setPage({ commit }, payload) {
     commit('setPage', payload)
   },
-  async setContactsPage({ commit }, payload) {
-    commit('setContactsPage', payload)
+  async setRoomsPage({ commit }, payload) {
+    commit('setRoomsPage', payload)
   },
-  async setContactsEnough({ commit }, payload) {
-    commit('setContactsEnough', payload)
+  async setRoomsEnough({ commit }, payload) {
+    commit('setRoomsEnough', payload)
   },
   async setQuery({ commit }, payload) {
     commit('setQuery', payload)

@@ -8,6 +8,7 @@ const getDefaultState = () => {
     notificationBadge: 0,
     messagesBadge: 0,
     registerLoading: false,
+    searchedUsers: null,
   }
 }
 export const state = () => getDefaultState()
@@ -49,6 +50,12 @@ export const mutations = {
   setNotificationBadge(state, payload) {
     state.notificationBadge = payload
   },
+  setSearch(state, payload) {
+    state.searchedUsers = payload
+  },
+  resetSearch(state) {
+    state.searchedUsers = null
+  },
   resetState(state) {
     Object.assign(state, getDefaultState())
   },
@@ -57,13 +64,26 @@ export const actions = {
   async resetState({ commit }) {
     commit('resetState')
   },
+  async resetUserSearch({ commit }) {
+    commit('resetSearch')
+  },
   async setDevice({ commit }, payload) {
     commit('setDevice', payload)
   },
   async getSettings({ commit }) {
-    const mode = localStorage.getItem('mode') || null
+    const mode = localStorage.getItem('mode') || 'light'
     if (mode) {
       await commit('setMode', mode)
+    }
+  },
+  async searchUser({ commit, dispatch }, searchKey) {
+    try {
+      const response = await this.$axios.post('/api/search', { searchKey })
+      await commit('setSearch', response.data.data)
+    } catch (error) {
+      await dispatch('alert/error', error.response, {
+        root: true,
+      })
     }
   },
   async getBadges({ commit, dispatch }) {

@@ -1,59 +1,6 @@
 <template>
-  <div class="flex">
-    <div class="relative w-full">
-      <div
-        class="hidden lg:flex items-center justify-between py-3 px-5 border-b border-gray-200"
-      >
-        <div class="flex flex-row">
-          <vs-avatar
-            v-if="
-              !room.is_group &&
-              messagedUser(room.participants).avatar !== 'noavatar'
-            "
-            primary
-            size="42"
-          >
-            <img
-              :src="`${
-                smallAvatar + messagedUser(room.participants).avatar
-              }.jpg`"
-              alt="Avatar"
-            />
-            <template v-if="room.unread > 0" #badge>
-              <span>{{ room.unread }}</span>
-            </template>
-          </vs-avatar>
-          <vs-avatar v-else primary>
-            <i
-              v-if="
-                !room.is_group &&
-                messagedUser(room.participants).avatar === 'noavatar'
-              "
-              class="bx bx-user"
-            ></i>
-            <i v-else class="bx bx-network-chart"></i>
-          </vs-avatar>
-          <div
-            class="flex flex-col ml-3"
-            :class="!room.is_group ? '' : 'justify-center'"
-          >
-            <h4 class="truncate lg:w-36">
-              {{
-                !room.is_group && messagedUser(room.participants)
-                  ? messagedUser(room.participants).name
-                  : room.name
-              }}
-            </h4>
-            <span v-if="!room.is_group" class="text-gray-400 text-xs">
-              {{
-                !room.is_group
-                  ? '@' + messagedUser(room.participants).username
-                  : ''
-              }}
-            </span>
-          </div>
-        </div>
-      </div>
+  <div class="flex" :class="rightBar ? '' : 'no-sidebar'">
+    <div id="content" class="relative w-full bg-gray-50">
       <ul
         class="px-5 pt-1 pb-16 lg:pb-24 relative messagebox overflow-auto disable-scrollbars"
       >
@@ -65,8 +12,13 @@
             direction="top"
             :distance="300"
             @infinite="infiniteHandler"
-            ><span slot="no-results"></span><span slot="no-more"></span
-          ></InfiniteLoading>
+          >
+            <div slot="no-results">
+              <span class="text-xs text-purple-600">
+                No more messages found :(
+              </span>
+            </div>
+          </InfiniteLoading>
         </client-only>
 
         <li
@@ -83,28 +35,35 @@
           </div>
           <div
             class="flex text-sm"
-            :class="message.from === loggedInUser.id ? 'ml-auto' : 'mr-auto'"
+            :class="message.user_id === loggedInUser.id ? 'ml-auto' : 'mr-auto'"
           >
-            <span
-              v-if="message.text"
-              class="rounded-2xl w-full max-w-sm px-5 py-2"
+            <div
+              class="flex flex-col space-y-1 rounded-2xl w-full max-w-sm px-3 py-2"
               :class="
-                message.from === loggedInUser.id
+                message.user_id === loggedInUser.id
                   ? 'bg-purple-500 text-white'
                   : 'bg-gray-100'
               "
-              >{{ message.text }}</span
             >
+              <span
+                v-if="room.is_group && message.user_id !== loggedInUser.id"
+                class="text-blue-400 font-semibold"
+              >
+                {{ message.user.name }}
+              </span>
+              <span v-if="message.text">
+                {{ message.text }}
+              </span>
+            </div>
           </div>
           <span
             v-if="checkNext(message)"
             class="text-2xs text-gray-400 mt-1 mx-1"
-            :class="{ 'ml-auto': message.from === loggedInUser.id }"
+            :class="{ 'ml-auto': message.user_id === loggedInUser.id }"
             >{{ $moment(message.created_at).format('hh:mm A') }}</span
           >
         </li>
       </ul>
-
       <div
         class="absolute bottom-0 left-0 lg:p-5 w-full bg-gradient-to-t from-white"
       >
@@ -114,7 +73,7 @@
           <div class="flex flex-row w-full items-center">
             <vs-avatar size="28" primary>
               <template #text>
-                {{ capitalize(loggedInUser.name) }}
+                {{ loggedInUser ? capitalize(loggedInUser.name) : '' }}
               </template>
             </vs-avatar>
             <textarea
@@ -145,19 +104,22 @@
       </div>
     </div>
     <MessageRightBar
+      v-if="room"
+      id="sidebar"
       :room="room"
       :is-open="rightBar"
-      :class="rightBar ? 'w-64' : 'w-20'"
+      :class="rightBar ? 'expanded' : ''"
     >
-      <vs-avatar
-        size="42"
-        dark
-        class="cursor-pointer"
+      <vs-button
+        flat
+        size="large"
+        class="w-min"
+        :class="rightBar ? '-ml-1' : ''"
         @click="rightBar = !rightBar"
       >
         <i v-if="!rightBar" class="bx bxs-left-arrow"></i>
         <i v-else class="bx bxs-right-arrow"></i>
-      </vs-avatar>
+      </vs-button>
     </MessageRightBar>
   </div>
 </template>
@@ -198,7 +160,6 @@ export default {
       messagesState: (state) => state.messages.messages,
       loading: (state) => state.messages.messagesLoading,
       sendLoading: (state) => state.messages.sendLoading,
-      contacts: (state) => state.messages.contacts,
       socket: (state) => state.messages.socket,
     }),
     messages: {
@@ -216,8 +177,13 @@ export default {
         this.$refs.textarea.focus()
       }
     },
+    async room(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        await this.resetMessageBoard()
+      }
+    },
   },
-  mounted() {
+  async mounted() {
     /*
     if (!this.socket) {
       this.setSocket(true)
@@ -239,6 +205,7 @@ export default {
       messageFromAnother: 'messages/messageFromAnother',
       toggleLoading: 'messages/toggleMessagesLoading',
       setSocket: 'messages/setSocket',
+      resetMessageBoard: 'messages/resetMessageBoard',
     }),
     messagedUser(arr) {
       let toUser = null
@@ -260,27 +227,37 @@ export default {
     },
     async hanleIncoming(message) {
       const self = this
-      if (this.selected && message.from == this.selected.user.id) {
+      if (this.selected && message.room_id === this.room.id) {
         this.insertSocketMessage(message).then(() => {
           self.scrollToElement()
         })
       } else {
-        this.messageFromAnother(message)
+        await this.messageFromAnother(message)
       }
     },
     async send() {
       const self = this
       const { textarea } = this.$refs
-      var formData = new FormData()
-      formData.append('contact_id', this.checkSender())
-      if (this.message) {
-        formData.append('text', this.message)
+      let formData = {
+        roomId: this.room.id,
+        text: this.message,
       }
+      /*
       if (this.image) {
         formData.append('image', this.image)
-      }
-      this.sendMessage(formData).catch((id) => {
-        self.removeMessage(id)
+      } */
+      this.sendMessage(formData).catch((error) => {
+        self.removeMessage(error.unique)
+        let errors = ''
+        const err = error.error
+        if (err.errorMessage && err.errorMessage.length > 0) {
+          err.errorMessage.forEach((error, index) => {
+            if (index !== 0 && index !== err.errorMessage.length) {
+              errors += '<br>'
+            }
+            errors += error
+          })
+        }
         self.$vs.notification({
           duration: 5000,
           progress: 'auto',
@@ -288,8 +265,8 @@ export default {
           color: 'danger',
           icon: `<i class='bx bxs-error' ></i>`,
           position: 'top-right',
-          title: 'An error occured!',
-          text: 'An error occurred while sending your message. Please try again.',
+          title: 'Error!',
+          text: errors,
         })
       })
       setTimeout(() => {
@@ -301,6 +278,13 @@ export default {
           self.$refs.textarea.focus()
         }, 500)
       }, 100)
+    },
+    scrollToElement() {
+      const last = this.messages[this.messages.length - 1].id
+      const el = document.getElementById(`message-${last}`)
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+      }
     },
     checkNext(message) {
       const index = this.messages.findIndex((item) => item === message)
@@ -332,14 +316,15 @@ export default {
       return false
     },
     onPaste(e) {
+      /*
       let file =
-        e.clipboardData.items[e.clipboardData.items.length - 1].getAsFile()
+        e.clipboardData.items[e.clipboardData.items.length - 1].getAsFile() */
       let text = e.clipboardData.getData('text')
-      if (file) {
+      /* if (file) {
         this.image = file
         this.message = ''
         this.send()
-      }
+      } */
       if (text) {
         this.message = text
       }
@@ -374,8 +359,32 @@ export default {
     capitalize(text) {
       return text.toUpperCase()
     },
+    expandContract() {
+      const el = document.getElementById('expand-contract')
+      el.classList.toggle('expanded')
+      el.classList.toggle('collapsed')
+    },
   },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+#sidebar {
+  transition: all 0.5s;
+  width: 299px;
+}
+
+#content {
+  transition: all 0.5s;
+  width: calc(100% - 299px);
+}
+
+.no-sidebar #sidebar {
+  margin-right: -219px;
+  width: 80px;
+}
+
+.no-sidebar #content {
+  width: calc(100% - 80px);
+}
+</style>
