@@ -43,8 +43,19 @@ export default {
     '@nuxtjs/color-mode',
     // https://github.com/nuxt-community/moment-module
     '@nuxtjs/moment',
+    '@nuxtjs/laravel-echo',
   ],
-
+  echo: {
+    broadcaster: 'socket.io',
+    host: 'http://localhost:6002',
+    authEndpoint: '/broadcasting/auth',
+    authModule: true,
+    path: '/socket.io',
+    connectOnLogin: true,
+    disconnectOnLogout: true,
+    plugins: ['@/plugins/echo'],
+    forceTLS: false,
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/axios', '@nuxtjs/auth-next'],
 

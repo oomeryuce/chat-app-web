@@ -2,7 +2,7 @@
   <div class="flex" :class="rightBar ? '' : 'no-sidebar'">
     <div id="content" class="relative w-full bg-gray-50">
       <ul
-        class="px-5 pt-1 pb-16 lg:pb-24 relative messagebox overflow-auto disable-scrollbars"
+        class="px-5 pt-1 pb-16 lg:pb-24 max-h-screen relative messagebox overflow-auto disable-scrollbars"
       >
         <client-only>
           <InfiniteLoading
@@ -22,9 +22,9 @@
         </client-only>
 
         <li
-          v-for="message in messages"
+          v-for="(message, index) in messages"
           :id="`message-${message.id}`"
-          :key="message.id"
+          :key="index"
           class="flex flex-col my-1"
           :disabled="message.unique"
         >
@@ -179,11 +179,14 @@ export default {
     },
     async room(newVal, oldVal) {
       if (newVal !== oldVal) {
+        this.$echo.leave(`room.${oldVal.id}`)
         await this.resetMessageBoard()
       }
+      await this.mountSocket(newVal)
     },
   },
   async mounted() {
+    await this.mountSocket(this.room)
     /*
     if (!this.socket) {
       this.setSocket(true)
@@ -207,6 +210,13 @@ export default {
       setSocket: 'messages/setSocket',
       resetMessageBoard: 'messages/resetMessageBoard',
     }),
+    mountSocket(room) {
+      this.$echo.private(`room-events-${room.id}`).listen('RoomEvents', (e) => {
+        if (e.message.user.id !== this.loggedInUser.id) {
+          this.hanleIncoming(e.message)
+        }
+      })
+    },
     messagedUser(arr) {
       let toUser = null
       arr.forEach((user) => {

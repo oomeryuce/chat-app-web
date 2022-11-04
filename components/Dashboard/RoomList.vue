@@ -1,13 +1,13 @@
 <template>
   <div
-    class="flex flex-row lg:flex-col bg-white h-24 w-full lg:h-screen lg:border-l lg:border-r border-gray-200 border-b lg:border-b-0"
+    class="flex flex-col bg-white w-full h-screen border-l border-r border-gray-200 border-b border-b-0"
   >
-    <div class="mx-5 mt-5 mb-2 flex flex-row items-center hidden lg:flex">
+    <div class="mx-5 mt-5 mb-2 flex flex-row items-center flex">
       <h1 class="mb-1 mr-1">Messages</h1>
       <vs-button size="small" flat>{{ messagesBadge }}</vs-button>
     </div>
 
-    <div class="hidden lg:block">
+    <div>
       <vs-input
         v-model="search"
         color="#7d33ff"
@@ -34,13 +34,13 @@
 
     <div
       ref="contacts"
-      class="relative flex flex-row lg:flex-col lg:divide-y lg:divide-gray-200 pl-3 lg:pl-0 mt-4 overflow-auto disable-scrollbars"
-      :class="{ 'w-screen lg:h-screen': loading }"
+      class="relative flex flex-col divide-y divide-gray-200 pl-3 pl-0 mt-4 overflow-auto disable-scrollbars"
+      :class="{ 'w-screen h-screen': loading }"
     >
       <div
         v-for="contact in filteredList"
         :key="contact.id"
-        class="flex lg:justify-between cursor-pointer p-2 rounded-lg hover:bg-purple-50 lg:rounded-none lg:pl-5 lg:pr-3 lg:py-4"
+        class="flex justify-between cursor-pointer rounded-lg hover:bg-purple-50 rounded-none pl-5 pr-3 py-4"
         :class="{ 'bg-gray-100': contact === selected }"
         @click="setRoom(contact)"
       >
@@ -94,7 +94,7 @@
             </span>
           </div>
         </div>
-        <span class="hidden lg:flex text-xs text-right text-gray-500">{{
+        <span class="flex text-xs text-right text-gray-500">{{
           $moment(contact.created_at).fromNow(true)
         }}</span>
       </div>
