@@ -47,10 +47,10 @@ export default {
   ],
   echo: {
     broadcaster: 'socket.io',
-    host: 'http://localhost:6002',
+    host: 'http://127.0.0.1:6002',
     authEndpoint: '/broadcasting/auth',
     authModule: true,
-    path: '/socket.io',
+    path: '/ws/socket.io',
     connectOnLogin: true,
     disconnectOnLogout: true,
     plugins: ['@/plugins/echo'],
