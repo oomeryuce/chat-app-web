@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import RoomList from '~/components/Dashboard/RoomList'
 import SettingsList from '~/components/Settings/SideList'
 export default {

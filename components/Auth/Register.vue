@@ -95,9 +95,7 @@
           </vs-button>
         </form>
         <div class="flex justify-center text-sm my-5">
-          <span class="text-gray-600 dark:text-gray-400"
-            >Already have an Account</span
-          >
+          <span class="text-gray-600">Already have an Account</span>
           <n-link :to="'/auth'" class="ml-3 text-purple-500 font-bold"
             >Login</n-link
           >

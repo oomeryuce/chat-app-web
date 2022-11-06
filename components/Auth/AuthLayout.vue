@@ -54,9 +54,7 @@
               <i v-else class="bx bx-hide"></i>
             </template>
           </vs-input>
-          <div
-            class="flex justify-end items-center text-sm my-3 text-gray-600 dark:text-gray-400"
-          >
+          <div class="flex justify-end items-center text-sm my-3 text-gray-600">
             <n-link :to="'/forgot-password'">Forgot Password?</n-link>
           </div>
           <vs-button
@@ -76,7 +74,7 @@
           </vs-button>
         </form>
         <div class="flex justify-center text-sm my-5">
-          <span class="text-gray-600 dark:text-gray-400">New here?</span>
+          <span class="text-gray-600">New here?</span>
           <n-link class="ml-3 text-purple-500 font-bold" :to="'/register'"
             >Create a New Account</n-link
           >
