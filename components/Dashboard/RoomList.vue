@@ -22,9 +22,7 @@
       </vs-input>
     </div>
 
-    <div
-      class="hidden lg:flex justify-between items-center lg:mx-5 lg:mt-5 px-3 lg:px-0"
-    >
+    <div class="hidden lg:flex justify-between items-center p-4">
       <h3 class="flex">Contacts</h3>
       <vs-button size="small" success flat @click="newRoomDialog = true">
         <i class="bx bxs-user-plus text-base"></i>
@@ -34,24 +32,24 @@
 
     <div
       ref="contacts"
-      class="relative flex flex-col divide-y divide-gray-200 pl-3 pl-0 mt-4 overflow-auto disable-scrollbars"
+      class="relative flex flex-col divide-y divide-gray-200 overflow-auto disable-scrollbars"
       :class="{ 'w-screen h-screen': loading }"
     >
       <div
         v-for="contact in filteredList"
         :key="contact.id"
-        class="flex justify-between cursor-pointer rounded-lg hover:bg-purple-50 rounded-none pl-5 pr-3 py-4"
+        class="flex justify-between cursor-pointer rounded-lg hover:bg-purple-50 rounded-none p-4"
         :class="{ 'bg-gray-100': contact === selected }"
         @click="setRoom(contact)"
       >
-        <div class="flex flex-row">
+        <div class="flex flex-row space-x-2">
           <vs-avatar
             v-if="
               !contact.is_group &&
               messagedUser(contact.participants).avatar !== 'noavatar'
             "
             primary
-            size="42"
+            size="50"
           >
             <img
               :src="`${
@@ -63,7 +61,7 @@
               <span>{{ contact.unread }}</span>
             </template>
           </vs-avatar>
-          <vs-avatar v-else primary>
+          <vs-avatar v-else primary size="50">
             <i
               v-if="
                 !contact.is_group &&
@@ -75,28 +73,35 @@
           </vs-avatar>
           <div
             v-show="contact === selected || !isMobile"
-            class="flex flex-col ml-3"
-            :class="!contact.is_group ? '' : 'justify-center'"
+            class="flex flex-col justify-center"
           >
-            <h4 class="truncate lg:w-36">
+            <h4 class="truncate w-24">
               {{
                 !contact.is_group && messagedUser(contact.participants)
                   ? messagedUser(contact.participants).name
                   : contact.name
               }}
             </h4>
-            <span v-if="!contact.is_group" class="text-gray-400 text-xs">
-              {{
-                !contact.is_group
-                  ? '@' + messagedUser(contact.participants).username
-                  : ''
-              }}
+            <span
+              v-if="contact.last_message"
+              class="text-xs text-gray-500 w-24 truncate"
+            >
+              {{ contact.last_message.text }}
             </span>
           </div>
         </div>
-        <span class="flex text-xs text-right text-gray-500">{{
-          $moment(contact.created_at).fromNow(true)
-        }}</span>
+        <div class="flex flex-col justify-center">
+          <span v-if="!contact.is_group" class="text-gray-500 text-xs">
+            {{
+              !contact.is_group
+                ? '@' + messagedUser(contact.participants).username
+                : ''
+            }}
+          </span>
+          <span class="flex text-2xs text-right text-gray-500">{{
+            $moment(contact.created_at).fromNow(true)
+          }}</span>
+        </div>
       </div>
 
       <client-only>
