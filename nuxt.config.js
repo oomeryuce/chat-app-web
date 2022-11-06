@@ -47,7 +47,7 @@ export default {
   ],
   echo: {
     broadcaster: 'socket.io',
-    host: 'http://127.0.0.1:6002',
+    host: 'http://api-uacs.gasome.com:6002',
     authEndpoint: '/broadcasting/auth',
     authModule: true,
     path: '/ws/socket.io',
