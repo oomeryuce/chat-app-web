@@ -2,7 +2,9 @@
   <div class="container m-auto">
     <div class="grid grid-cols-6 lg:grid-cols-5 gap-4 min-h-screen">
       <div class="p-10 lg:p-20 my-auto col-span-6 md:col-span-3 lg:col-span-2">
-        <div class="flex items-center justify-start text-4xl font-semibold text-purple-500">
+        <div
+          class="flex items-center justify-start text-4xl font-semibold text-purple-500"
+        >
           <i class="bx bx-message-square-dots"></i>
           <span>Chat App</span>
         </div>
@@ -53,15 +55,7 @@
             </template>
           </vs-input>
           <div
-            class="
-              flex
-              justify-end
-              items-center
-              text-sm
-              my-3
-              text-gray-600
-              dark:text-gray-400
-            "
+            class="flex justify-end items-center text-sm my-3 text-gray-600 dark:text-gray-400"
           >
             <n-link :to="'/forgot-password'">Forgot Password?</n-link>
           </div>
@@ -71,18 +65,21 @@
             size="large"
             animation-type="vertical"
             :loading="loading"
-            shadow border
+            shadow
+            border
             @keyup.enter="login"
           >
             <b>Sign In</b>
             <template #animate>
-              <i class='bx bxs-door-open'></i>
+              <i class="bx bxs-door-open"></i>
             </template>
           </vs-button>
         </form>
         <div class="flex justify-center text-sm my-5">
           <span class="text-gray-600 dark:text-gray-400">New here?</span>
-          <n-link class="ml-3 text-purple-500 font-bold" :to="'/register'">Create a New Account</n-link>
+          <n-link class="ml-3 text-purple-500 font-bold" :to="'/register'"
+            >Create a New Account</n-link
+          >
         </div>
         <!-- <div class="my-5 separator">or continue with</div>
         <div class="grid grid-cols-3 gap-2">
@@ -111,7 +108,7 @@
 import lottie from 'vue-lottie/src/lottie.vue'
 import * as animationData from '~/assets/lottie/login.json'
 export default {
-  name: "AuthLayout",
+  name: 'AuthLayout',
   components: { lottie },
   data: () => ({
     username: '',
@@ -164,7 +161,7 @@ export default {
             color: 'danger',
             icon: `<i class='bx bx-error' ></i>`,
             position: 'top-center',
-            title: "An error occured",
+            title: 'An error occured',
             text: err,
           })
         })
@@ -173,6 +170,4 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -6,30 +6,31 @@ export default {
   head: {
     title: 'chat-app-web',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'en',
     },
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
     ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
   router: {
-    middleware: ['auth']
+    middleware: ['auth'],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ['vuesax/dist/vuesax.css', 'boxicons/css/boxicons.min.css', '~assets/css/main.css', '~assets/scss/main.scss'],
+  css: [
+    'vuesax/dist/vuesax.css',
+    'boxicons/css/boxicons.min.css',
+    '~assets/css/main.css',
+    '~assets/scss/main.scss',
+  ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: [
-    { src: '~/plugins/vuesax.js' },
-  ],
+  plugins: [{ src: '~/plugins/vuesax.js' }],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -39,21 +40,27 @@ export default {
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxtjs/tailwindcss',
     // https://color-mode.nuxtjs.org/
-    "@nuxtjs/color-mode",
+    '@nuxtjs/color-mode',
     // https://github.com/nuxt-community/moment-module
-    "@nuxtjs/moment",
+    '@nuxtjs/moment',
+    '@nuxtjs/laravel-echo',
   ],
-
+  echo: {
+    broadcaster: 'socket.io',
+    host: 'http://localhost:6002',
+    authEndpoint: '/broadcasting/auth',
+    authModule: true,
+    path: '/socket.io',
+    connectOnLogin: true,
+    disconnectOnLogout: true,
+    plugins: ['@/plugins/echo'],
+    forceTLS: false,
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: [
-    "@nuxtjs/tailwindcss",
-    "@nuxtjs/axios",
-    "@nuxtjs/auth-next",
-  ],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/axios', '@nuxtjs/auth-next'],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {
-  },
+  build: {},
   axios: {
     proxy: true,
     baseURL: process.env.API_URL,
@@ -73,7 +80,7 @@ export default {
       login: '/auth',
       logout: '/auth',
       callback: '/auth',
-      home: '/'
+      home: '/',
     },
     strategies: {
       local: {

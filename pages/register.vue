@@ -9,15 +9,15 @@ export default {
   components: {
     Register,
   },
-  layout: "auth",
+  layout: 'auth',
   head() {
     return {
-      title: "Register",
+      title: 'Register',
       meta: [
         {
           hid: 'description',
           name: 'description',
-          content: "Register",
+          content: 'Register',
         },
       ],
     }
