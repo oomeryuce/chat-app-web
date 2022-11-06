@@ -18,6 +18,11 @@
                 No more messages found :(
               </span>
             </div>
+            <div slot="no-more">
+              <span class="text-xs text-purple-600">
+                No more messages found :(
+              </span>
+            </div>
           </InfiniteLoading>
         </client-only>
 
@@ -147,6 +152,7 @@ export default {
       image: null,
       index: null,
       showedImage: [],
+      online: [],
       rightBar: false,
       smallAvatar: process.env.AVATAR_SMALL,
       smallMessageImage: process.env.MESSAGES_SMALL,
@@ -179,7 +185,8 @@ export default {
     },
     async room(newVal, oldVal) {
       if (newVal !== oldVal) {
-        this.$echo.leave(`room.${oldVal.id}`)
+        this.$echo.leave(`chat-room-${oldVal.id}`)
+        this.$echo.leave(`room-events-${oldVal.id}`)
         await this.resetMessageBoard()
       }
       await this.mountSocket(newVal)
@@ -211,11 +218,29 @@ export default {
       resetMessageBoard: 'messages/resetMessageBoard',
     }),
     mountSocket(room) {
-      this.$echo.private(`room-events-${room.id}`).listen('RoomEvents', (e) => {
-        if (e.message.user.id !== this.loggedInUser.id) {
-          this.hanleIncoming(e.message)
-        }
-      })
+      try {
+        this.$echo
+          .join(`chat-room-${room.id}`)
+          .here((users) => {
+            console.log(`${users} here`)
+          })
+          .joining((user) => {
+            console.log(`${user} joining`)
+          })
+          .leaving((user) => {
+            console.log(`${user} leaving`)
+          })
+
+        this.$echo
+          .private(`room-events-${room.id}`)
+          .listen('RoomEvents', (e) => {
+            if (e.message.user.id !== this.loggedInUser.id) {
+              this.hanleIncoming(e.message)
+            }
+          })
+      } catch (e) {
+        console.log(e)
+      }
     },
     messagedUser(arr) {
       let toUser = null
