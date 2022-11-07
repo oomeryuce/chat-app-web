@@ -3,5 +3,4 @@ export default async function ({ $echo }) {
     $echo.options.broadcaster = $echo.config.broadcaster
     await $echo.connect()
   }
-  console.log($echo)
 }
