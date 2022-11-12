@@ -7,27 +7,18 @@
     <vs-tooltip left>
       <div class="flex flex-row">
         <vs-avatar
-          v-if="
-            !room.is_group &&
-            messagedUser(room.participants).avatar !== 'noavatar'
-          "
+          v-if="!room.is_group && messagedUser.avatar !== 'noavatar'"
           primary
           size="42"
         >
-          <img
-            :src="`${smallAvatar + messagedUser(room.participants).avatar}.jpg`"
-            alt="Avatar"
-          />
+          <img :src="`${smallAvatar + messagedUser.avatar}.jpg`" alt="Avatar" />
           <template v-if="room.unread > 0" #badge>
             <span>{{ room.unread }}</span>
           </template>
         </vs-avatar>
         <vs-avatar v-else primary>
           <i
-            v-if="
-              !room.is_group &&
-              messagedUser(room.participants).avatar === 'noavatar'
-            "
+            v-if="!room.is_group && messagedUser.avatar === 'noavatar'"
             class="bx bx-user"
           ></i>
           <i v-else class="bx bx-network-chart"></i>
@@ -38,23 +29,15 @@
           :class="!room.is_group ? '' : 'justify-center'"
         >
           <h4 class="truncate lg:w-36">
-            {{
-              !room.is_group && messagedUser(room.participants)
-                ? messagedUser(room.participants).name
-                : room.name
-            }}
+            {{ !room.is_group && messagedUser ? messagedUser.name : room.name }}
           </h4>
           <span v-if="!room.is_group" class="text-gray-400 text-xs">
-            {{
-              !room.is_group
-                ? '@' + messagedUser(room.participants).username
-                : ''
-            }}
+            {{ !room.is_group ? '@' + messagedUser.username : '' }}
           </span>
         </div>
       </div>
       <template #tooltip>
-        {{ room.is_group ? room.name : messagedUser(room.participants).name }}
+        {{ room.is_group ? room.name : messagedUser.name }}
       </template>
     </vs-tooltip>
     <span
@@ -90,7 +73,7 @@
       <span v-show="isOpen" class="text-sm text-gray-400 font-light">
         About
       </span>
-      <span v-show="isOpen">{{ messagedUser(room.participants).bio }}</span>
+      <span v-show="isOpen">{{ messagedUser.bio }}</span>
     </div>
   </div>
 </template>
@@ -117,17 +100,17 @@ export default {
   },
   computed: {
     ...mapGetters(['loggedInUser']),
-  },
-  methods: {
-    messagedUser(arr) {
+    messagedUser() {
       let toUser = null
-      arr.forEach((user) => {
-        if (user.id !== this.loggedInUser.id) {
+      this.room.participants.forEach((user) => {
+        if (user.user_id !== this.loggedInUser.id) {
           toUser = user.user
         }
       })
       return toUser
     },
+  },
+  methods: {
     capitalize(text) {
       return text.toUpperCase()
     },
