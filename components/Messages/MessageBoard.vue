@@ -84,7 +84,7 @@
             <textarea
               ref="textarea"
               v-model="message"
-              class="w-full h-full ml-3 pl-3 pr-12 py-2 text-base lg:text-sm text-gray-700 rounded-lg focus:outline-none resize-none"
+              class="w-full h-full ml-3 pl-3 pr-12 py-2 text-base lg:text-sm text-gray-700 rounded-lg focus:outline-none resize-none overflow-hidden"
               rows="1"
               placeholder="Type something..."
               :disabled="sendLoading"
@@ -415,7 +415,7 @@ export default {
         this.send()
       } */
       if (text) {
-        this.message = text
+        this.message += text
       }
     },
     checkDate(message) {
