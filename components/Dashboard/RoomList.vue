@@ -90,7 +90,22 @@
             </span>
           </div>
         </div>
-        <div class="flex flex-col justify-center">
+        <div class="flex flex-col justify-center items-end">
+          <span
+            v-if="
+              contact !== selected &&
+              contact.last_message.user_id !== loggedInUser.id &&
+              !contact.last_message.read
+            "
+            class="flex h-2 w-2 relative"
+          >
+            <span
+              class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"
+            ></span>
+            <span
+              class="relative inline-flex rounded-full h-2 w-2 bg-sky-500"
+            ></span>
+          </span>
           <span v-if="!contact.is_group" class="text-gray-500 text-xs">
             {{
               !contact.is_group
@@ -98,8 +113,8 @@
                 : ''
             }}
           </span>
-          <span class="flex text-2xs text-right text-gray-500">{{
-            $moment(contact.created_at).fromNow(true)
+          <span class="flex text-2xs text-gray-500">{{
+            $moment(contact.last_message.created_at).fromNow(true)
           }}</span>
         </div>
       </div>
