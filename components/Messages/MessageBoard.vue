@@ -84,7 +84,7 @@
             <textarea
               ref="textarea"
               v-model="message"
-              class="w-full h-full ml-3 px-3 py-2 text-base lg:text-sm text-gray-700 rounded-lg focus:outline-none resize-none"
+              class="w-full h-full ml-3 pl-3 pr-12 py-2 text-base lg:text-sm text-gray-700 rounded-lg focus:outline-none resize-none"
               rows="1"
               placeholder="Type something..."
               :disabled="sendLoading"
@@ -93,6 +93,57 @@
               @keydown.enter.exact.prevent="send"
               @paste.prevent="onPaste"
             ></textarea>
+            <EmojiPicker :search="emojiSearch">
+              <vs-button
+                slot="emoji-invoker"
+                slot-scope="{ events: { click: clickEvent } }"
+                shadow
+                size="small"
+                class="absolute-important top-7 right-20"
+                @click.stop="clickEvent"
+              >
+                <i class="bx bx-smile text-xl"></i>
+              </vs-button>
+
+              <div slot="emoji-picker" slot-scope="{ emojis }">
+                <div
+                  class="absolute z-10 border-none w-64 h-96 overflow-scroll p-4 rounded bg-white dark:bg-content-bg shadow-xl bottom-20 right-20"
+                >
+                  <div class="flex">
+                    <input
+                      v-model="emojiSearch"
+                      v-focus
+                      class="rounded-full dark:bg-content-bg dark:text-gray-400 border dark:border-gray-600 border-gray-300 py-2 px-4 outline-none focus:shadow-outline w-full"
+                      type="text"
+                      placeholder="Search"
+                    />
+                  </div>
+                  <div>
+                    <div
+                      v-for="(emojiGroup, category) in emojis"
+                      :key="category"
+                    >
+                      <h5
+                        class="text-grey-darker uppercase text-sm cursor-default mb-2 mt-4"
+                      >
+                        {{ category }}
+                      </h5>
+                      <div class="flex flex-wrap justify-between emojis">
+                        <button
+                          v-for="(emoji, emojiName) in emojiGroup"
+                          :key="emojiName"
+                          class="p-1 cursor-pointer rounded bg-white focus:outline-none focus:shadow-outline text-xl flex items-center justify-center h-7 w-7"
+                          :title="emojiName"
+                          @click="append(emoji)"
+                        >
+                          {{ emoji }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </EmojiPicker>
           </div>
 
           <div class="flex flex-row space-x-2">
@@ -132,6 +183,7 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
 import InfiniteLoading from 'vue-infinite-loading'
+import EmojiPicker from 'vue-emoji-picker'
 import MessageRightBar from '@/components/Messages/MessageRightBar'
 
 export default {
@@ -139,6 +191,7 @@ export default {
   components: {
     InfiniteLoading,
     MessageRightBar,
+    EmojiPicker,
   },
   props: {
     room: {
@@ -149,6 +202,7 @@ export default {
   data() {
     return {
       message: '',
+      emojiSearch: '',
       image: null,
       index: null,
       showedImage: [],
@@ -393,6 +447,9 @@ export default {
     },
     capitalize(text) {
       return text.toUpperCase()
+    },
+    append(emoji) {
+      this.message += emoji
     },
     expandContract() {
       const el = document.getElementById('expand-contract')
