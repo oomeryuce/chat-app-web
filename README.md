@@ -1,69 +1,147 @@
-# chat-app-web
+# Web Chat Application Frontend Project 3389
 
-## Build Setup
+This project is a modern **web (frontend) chat application** developed as part of a thesis at University American College Skopje.
+It is built using Nuxt.js (Vue.js) and is designed to connect with a Laravel 8 backend for real-time chat functionality and robust user management.
+The application features real-time communication via Socket.IO, beautiful UI components, authentication, emoji support, and infinite scrolling.
+
+While this repository contains the frontend codebase, all backend and socket server functionalities are handled by a separate repository:
+
+👉 **Backend repository:** [https://github.com/oomeryuce/chat-app-api](https://github.com/oomeryuce/chat-app-api)
+
+---
+
+## Table of Contents
+
+* [Features](#features)
+* [Installation](#installation)
+* [Development](#development)
+* [Configuration](#configuration)
+* [Scripts](#scripts)
+* [Main Packages Used](#main-packages-used)
+* [License](#license)
+* [Contribution & Support](#contribution--support)
+
+---
+
+## Features
+
+* **Nuxt.js (Vue.js) framework**
+* **Real-time chat** with Socket.IO
+* **Authentication** with @nuxtjs/auth-next
+* **API communication** with @nuxtjs/axios
+* **Modern UI** powered by Vuesax and Boxicons
+* **Emoji picker** integration
+* **Infinite chat message scrolling**
+* **Responsive and mobile-friendly design**
+* **Google Fonts & Dark mode**
+* **Lottie animations**
+* **Date/time formatting with Moment.js**
+
+---
+
+## Installation
+
+### 1. Clone the Repository
 
 ```bash
-# install dependencies
-$ yarn install
-
-# serve with hot reload at localhost:3000
-$ yarn dev
-
-# build for production and launch server
-$ yarn build
-$ yarn start
-
-# generate static project
-$ yarn generate
+git clone oomeryuce/chat-app-web
+cd chat-app-web
 ```
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+### 2. Install Dependencies
 
-## Special Directories
+```bash
+npm install
+```
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+---
 
-### `assets`
+## Development
 
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
+### Start the Development Server
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
+```bash
+npm run dev
+```
 
-### `components`
+### Build for Production
 
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
+```bash
+npm run build
+npm run start
+```
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
+### Generate Static Files
 
-### `layouts`
+```bash
+npm run generate
+```
 
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
+---
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
+## Configuration
 
+* **Environment Variables:**
 
-### `pages`
+  * You can configure API base URLs and authentication endpoints via `.env` or `nuxt.config.js`.
+  * Make sure to set the backend API base URL to match your Laravel backend server.
 
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
+* **Socket.IO:**
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
+  * Socket connections are managed with `socket.io-client`.
+  * Adjust the socket endpoint in your configuration if the backend server address changes.
 
-### `plugins`
+* **Authentication:**
 
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
+  * Handles login, registration, and session management with `@nuxtjs/auth-next`.
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
+---
 
-### `static`
+## Scripts
 
-This directory contains your static files. Each file inside this directory is mapped to `/`.
+* `npm run dev` – Start the development server
+* `npm run build` – Build for production
+* `npm run start` – Start the production server
+* `npm run generate` – Generate static files
 
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
+---
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
+## Main Packages Used
 
-### `store`
+* **Core Framework**
 
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
+  * `nuxt`
+  * `vue`
+* **UI & UX**
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+  * `vuesax`
+  * `boxicons`
+  * `vue-emoji-picker`
+  * `vue-lottie`
+  * `@nuxtjs/google-fonts`
+  * `@nuxtjs/tailwindcss`
+  * `tailwindcss-dark-mode`
+* **Real-time & Data**
+
+  * `socket.io-client`
+  * `@nuxtjs/axios`
+  * `@nuxtjs/auth-next`
+  * `@nuxtjs/moment`
+  * `vue-infinite-loading`
+* **Utilities & Tooling**
+
+  * `eslint`, `prettier`, `babel-eslint`, `postcss`, `sass`, etc.
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+## Contribution & Support
+
+Feel free to [open an issue](https://github.com/oomeryuce/chat-app-web/issues) or submit a pull request.
+
+For questions, reach out at: oomeryuce@gmail.com
